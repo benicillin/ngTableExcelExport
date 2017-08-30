@@ -110,7 +110,7 @@ var ngTableExcelExport = (function() {
         return data;
     };
 
-    var tableToHTML = function(table) {
+    var tableToHTML = function(table, excludeClass) {
         var data = "";
         var i, j, row, col;
         var columnStart = 0;
@@ -123,6 +123,11 @@ var ngTableExcelExport = (function() {
 				continue;
             }
             
+            //Checking for excluded class
+            if(row.className.indexOf(excludeClass) !== -1) {
+				continue;
+            }
+		
             //remove first column having check box in angular JS, in future will provide option from UI to control
             if(table.rows[0].cells[0].textContent.trim() === '') {
             	columnStart = 1;
@@ -165,10 +170,10 @@ var ngTableExcelExport = (function() {
 
     var ee = {
         /** @export */
-        excel: function(anchor, table, name) {
+        excel: function(anchor, table, name, excludeClass) {
             table = get(table);
 
-            var htmlTableData = tableToHTML(table);
+            var htmlTableData = tableToHTML(table, excludeClass);
             
             var ctx = {worksheet: name || 'Worksheet', table: htmlTableData};
             var b64 = base64(format(template.excel, ctx));
